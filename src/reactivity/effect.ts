@@ -6,7 +6,7 @@ class ReactiveEffect {
         this.fn = fn
     }
     run() {
-        this.fn()
+       return this.fn()
     }
 }
 
@@ -20,6 +20,8 @@ export function effect(fn) {
     activeReactive = _effect
     // 执行run就是执行fn
     _effect.run()
+
+    return _effect.run.bind(_effect)
 }
 
 // 收集依赖
