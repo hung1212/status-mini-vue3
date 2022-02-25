@@ -2,11 +2,13 @@
 // 创建一个依赖
 class ReactiveEffect {
     private fn
-    constructor(fn) {
+    public scheduler: Function | undefined
+    constructor(fn, scheduler?: Function) {
         this.fn = fn
+        this.scheduler = scheduler
     }
     run() {
-       return this.fn()
+        return this.fn()
     }
 }
 
@@ -15,8 +17,12 @@ let activeReactive
 // 创建一个弱内存
 let targetMap = new WeakMap()
 
-export function effect(fn) {
-    let _effect = new ReactiveEffect(fn)
+type effectOtions = {
+    scheduler?: Function
+}
+
+export function effect(fn, options: effectOtions = {}) {
+    let _effect = new ReactiveEffect(fn, options.scheduler)
     activeReactive = _effect
     // 执行run就是执行fn
     _effect.run()
@@ -51,7 +57,11 @@ export function trigger(target, props) {
     if(!deps) return
 
     deps && deps.forEach(effect => {
-        // 把deps的所有依赖取出来执行
-        effect.run()
+        if(effect.scheduler) {
+            effect.scheduler()
+        } else {
+            // 把deps的所有依赖取出来执行
+            effect.run()
+        }
     })
 }
