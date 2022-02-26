@@ -1,6 +1,9 @@
 
 // 创建一个依赖
 class ReactiveEffect {
+    deps: any = [] 
+    active: boolean = true
+    onStop?: Function
     private fn
     public scheduler: Function | undefined
     constructor(fn, scheduler?: Function) {
@@ -10,6 +13,18 @@ class ReactiveEffect {
     run() {
         return this.fn()
     }
+
+    stop() {
+        if(this.active) {
+            this.deps.forEach(dep => {
+                dep.delete(this)
+            })
+            if(this.onStop) {
+                this.onStop()
+            }
+            this.active = false
+        }
+    }
 }
 
 // 当前的依赖
@@ -18,16 +33,19 @@ let activeReactive
 let targetMap = new WeakMap()
 
 type effectOtions = {
-    scheduler?: Function
+    scheduler?: Function,
+    onStop?: Function
 }
 
 export function effect(fn, options: effectOtions = {}) {
     let _effect = new ReactiveEffect(fn, options.scheduler)
+    _effect.onStop = options.onStop
     activeReactive = _effect
     // 执行run就是执行fn
     _effect.run()
-
-    return _effect.run.bind(_effect)
+    const runner: any = _effect.run.bind(_effect)
+    runner.effect = _effect
+    return runner
 }
 
 // 收集依赖
@@ -44,8 +62,11 @@ export function track(target, props) {
         depsMap.set(props, (deps = new Set()))
     }
 
+    if(!activeReactive) return
     // 把依赖存进当前结构的deps里
     deps.add(activeReactive)
+    // 收集会触发activeReactive的deps 清除需要
+    activeReactive.deps.push(deps)
 }
 
 // 触发依赖
@@ -64,4 +85,9 @@ export function trigger(target, props) {
             effect.run()
         }
     })
+}
+
+// 要清除的effect
+export function stop(runner) {
+    runner.effect.stop()
 }
