@@ -1,4 +1,4 @@
-
+import { extend } from '../shared'
 // 创建一个依赖
 class ReactiveEffect {
     deps: any = [] 
@@ -11,14 +11,23 @@ class ReactiveEffect {
         this.scheduler = scheduler
     }
     run() {
-        return this.fn()
+        if(!this.active) {
+            return this.fn()
+        }
+
+        try {
+            activeEffect = this
+            shouldTrack = true
+            return this.fn()
+        } finally {
+            // active为ture 所以shouldTrack必然是false
+            shouldTrack = false
+        }
     }
 
     stop() {
         if(this.active) {
-            this.deps.forEach(dep => {
-                dep.delete(this)
-            })
+            cleanupEffect(this)
             if(this.onStop) {
                 this.onStop()
             }
@@ -27,10 +36,21 @@ class ReactiveEffect {
     }
 }
 
-// 当前的依赖
-let activeReactive
+function cleanupEffect(effect) {
+    const { deps } = effect
+    for(let i = 0; i < deps.length; i++) {
+        deps[i].delete(effect)
+    }
+
+    deps.length = 0
+}
+
 // 创建一个弱内存
 let targetMap = new WeakMap()
+
+let shouldTrack = true // 默认需要收集依赖
+// 当前的依赖
+let activeEffect
 
 type effectOtions = {
     scheduler?: Function,
@@ -39,8 +59,7 @@ type effectOtions = {
 
 export function effect(fn, options: effectOtions = {}) {
     let _effect = new ReactiveEffect(fn, options.scheduler)
-    _effect.onStop = options.onStop
-    activeReactive = _effect
+    extend(_effect, options)
     // 执行run就是执行fn
     _effect.run()
     const runner: any = _effect.run.bind(_effect)
@@ -50,8 +69,9 @@ export function effect(fn, options: effectOtions = {}) {
 
 // 收集依赖
 export function track(target, props) {
+    if(!shouldTrack || !activeEffect) return
     // 一个树形结构
-    // depsMap ==》 deps ==》 activeReactive
+    // depsMap ==》 deps ==》 activeEffect
     let depsMap = targetMap.get(targetMap)
     if(!depsMap) {
         targetMap.set(target, ( depsMap = new Map()))
@@ -62,11 +82,12 @@ export function track(target, props) {
         depsMap.set(props, (deps = new Set()))
     }
 
-    if(!activeReactive) return
+    // 看看 dep 之前有没有添加过，添加过的话 那么就不添加了
+    if (deps.has(activeEffect)) return;
     // 把依赖存进当前结构的deps里
-    deps.add(activeReactive)
-    // 收集会触发activeReactive的deps 清除需要
-    activeReactive.deps.push(deps)
+    deps.add(activeEffect)
+    // 收集会触发activeEffect的deps 清除需要
+    activeEffect.deps.push(deps)
 }
 
 // 触发依赖
