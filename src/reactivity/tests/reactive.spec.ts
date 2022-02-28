@@ -11,4 +11,16 @@ describe("reactive", ()=> {
         expect(isReactive(obj)).toBe(false)
         expect(isReactive(newObj)).toBe(true)
     })
+
+    it("nested isReactive", ()=> {
+        let original = {
+            nested: {
+                foo: 1
+            },
+            array:[{bar: 2}]
+        }
+        let observed = reactive(original)
+        expect(isReactive(observed.nested)).toBe(true)
+        expect(isReactive(observed.array[0])).toBe(true)
+    })
 })

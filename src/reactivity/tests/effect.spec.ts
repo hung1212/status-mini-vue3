@@ -92,4 +92,21 @@ describe('effect', ()=> {
       stop(runner);
       expect(onStop).toBeCalledTimes(1);
     });
+
+    it("nested reactive", ()=> {
+      let original = {
+        nested: {
+            foo: 1
+        },
+        array:[{bar: 2}]
+      }
+      let observed = reactive(original)
+      let runner
+      effect(()=> {
+        runner = observed.nested.foo
+      })
+      expect(runner).toBe(1)
+      observed.nested.foo = 10
+      expect(runner).toBe(10)
+    })
 })
