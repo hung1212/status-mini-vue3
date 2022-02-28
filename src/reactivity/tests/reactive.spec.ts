@@ -1,4 +1,4 @@
-import { reactive } from "../reactive"
+import { isReactive, reactive } from "../reactive"
 
 // 测试reactive模块
 describe("reactive", ()=> {
@@ -8,5 +8,7 @@ describe("reactive", ()=> {
         let newObj = reactive(obj)
         expect(newObj).not.toBe(obj)
         expect(newObj.test).toBe(123)
+        expect(isReactive(obj)).toBe(false)
+        expect(isReactive(newObj)).toBe(true)
     })
 })
