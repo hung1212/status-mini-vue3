@@ -72,7 +72,7 @@ export function track(target, props) {
     if(!shouldTrack || !activeEffect) return
     // 一个树形结构
     // depsMap ==》 deps ==》 activeEffect
-    let depsMap = targetMap.get(targetMap)
+    let depsMap = targetMap.get(target)
     if(!depsMap) {
         targetMap.set(target, ( depsMap = new Map()))
     }

@@ -16,6 +16,33 @@ describe('effect', ()=> {
         expect(value).toBe(11)
     })
 
+    it('should observe multiple properties', () => {
+      let dummy
+      const counter = reactive({ num1: 0, num2: 0 })
+      effect(() => (dummy = counter.num1 + counter.num1 + counter.num2))
+  
+      expect(dummy).toBe(0)
+      counter.num1 = counter.num2 = 7
+      expect(dummy).toBe(21)
+    })
+
+    // 分支未解决
+    // it('checkout', () => {
+    //   let fn = jest.fn(()=>{})
+    //   let dummy
+    //   const counter = reactive({ is: true, foo: 1 })
+    //   effect(() =>  {
+    //     dummy = counter.is ? counter.foo : 'not'
+    //     fn()
+    //   })
+    //   expect(dummy).toBe(counter.foo)
+    //   counter.is = false
+    //   expect(fn).toBeCalledTimes(2)
+    //   expect(dummy).toBe('not')
+    //   counter.foo = 10
+    //   expect(fn).toBeCalledTimes(2)
+    // })
+
     it("return effect", ()=> {
         // 用户可以手动执行expect.run()
         // runner的返回值就是fn的返回值
