@@ -1,4 +1,4 @@
-import { mutableHandlers, readonlyHandlers } from './baseHandlers'
+import { mutableHandlers, readonlyHandlers, shallowReadonlyHandlers } from './baseHandlers'
 export function reactive(obj) {
   return createReactiveObject(obj, mutableHandlers)
 }
@@ -6,6 +6,10 @@ export function reactive(obj) {
 export function readonly(obj) {
   return createReactiveObject(obj, readonlyHandlers)
 } 
+
+export function shallowReadonly(obj) {
+  return createReactiveObject(obj, shallowReadonlyHandlers)
+}
 
 function createReactiveObject(taw, baseHandlers) {
   return new Proxy(taw, baseHandlers)
