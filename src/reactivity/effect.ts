@@ -82,6 +82,10 @@ export function track(target, props) {
         depsMap.set(props, (deps = new Set()))
     }
 
+    trackEffects(deps)
+}
+
+export function trackEffects(deps) {
     // 看看 dep 之前有没有添加过，添加过的话 那么就不添加了
     if (deps.has(activeEffect)) return;
     // 把依赖存进当前结构的deps里
@@ -98,6 +102,10 @@ export function trigger(target, props) {
     let deps = depsMap.get(props)
     if(!deps) return
 
+    triggerEffects(deps)
+}
+
+export function triggerEffects(deps) {
     deps && deps.forEach(effect => {
         if(effect.scheduler) {
             effect.scheduler()
@@ -107,6 +115,10 @@ export function trigger(target, props) {
         }
     })
 }
+
+export function isTracking() {
+    return shouldTrack && activeEffect !== undefined;
+  }
 
 // 要清除的effect
 export function stop(runner) {
