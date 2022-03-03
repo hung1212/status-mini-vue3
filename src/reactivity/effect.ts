@@ -69,7 +69,7 @@ export function effect(fn, options: effectOtions = {}) {
 
 // 收集依赖
 export function track(target, props) {
-    if(!shouldTrack || !activeEffect) return
+    if(!isTracking()) return
     // 一个树形结构
     // depsMap ==》 deps ==》 activeEffect
     let depsMap = targetMap.get(target)
