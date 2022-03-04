@@ -1,6 +1,6 @@
 import { extend } from '../shared'
 // 创建一个依赖
-class ReactiveEffect {
+export class ReactiveEffect {
     deps: any = [] 
     active: boolean = true
     onStop?: Function
