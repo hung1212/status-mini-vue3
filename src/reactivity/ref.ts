@@ -1,6 +1,6 @@
 import { hasChanged, isObject } from "../shared";
 import { isTracking, trackEffects, triggerEffects } from "./effect";
-import { reactive } from "./reactive";
+import { isReactive, reactive } from "./reactive";
 
 class RefImpl {
   private _value: any;
@@ -42,11 +42,29 @@ export function ref(value) {
 }
 
 export function isRef(ref) {
-  return !!ref.__v_isRef
+  return !!(ref && ref.__v_isRef)
 }
 
 export function unRef(value) {
   return isRef(value) ? value.value : value
+}
+
+const shallowUnwrapHandlers: any = {
+  get(obj, key) {
+    return unRef(obj[key])
+  },
+  set(obj, key, value) {
+    let oldValue = obj[key]
+    if(isRef(oldValue) && !isRef(value)) {
+      oldValue.value = value
+      return true
+    }
+    return Reflect.set(obj, key, value)
+  }
+}
+
+export function proxyRefs(obj) {
+  return isReactive(obj) ? obj : new Proxy(obj, shallowUnwrapHandlers)
 }
 
 class ObjectRefImpl {
@@ -77,3 +95,4 @@ export function toRefs(obj) {
 
   return res
 }
+
