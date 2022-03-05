@@ -22,7 +22,7 @@ class RefImpl {
     if (hasChanged(newValue, this._rawValue)) {
       this._rawValue = newValue;
       this._value = convert(newValue);
-      triggerEffects(this.dep);
+      triggerRefValue(this);
     }
   }
 }
@@ -31,10 +31,14 @@ function convert(value) {
   return isObject(value) ? reactive(value) : value;
 }
 
-function trackRefValue(ref) {
+export function trackRefValue(ref) {
   if (isTracking()) {
     trackEffects(ref.dep);
   }
+}
+
+export function triggerRefValue(ref) {
+    triggerEffects(ref.dep)
 }
 
 export function ref(value) {

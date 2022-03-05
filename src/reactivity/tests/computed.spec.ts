@@ -1,4 +1,5 @@
 import { computed } from "../computed"
+import { effect } from "../effect"
 import { reactive } from "../reactive"
 
 describe('computed',()=> {
@@ -37,5 +38,17 @@ describe('computed',()=> {
         cValue.value
         expect(getter).toHaveBeenCalledTimes(2)
 
+    })
+
+    it('should trigget effect', ()=> {
+        const value = reactive({})
+        const cValue = computed(()=> value.foo)
+        let dummy
+        effect(()=> {
+           dummy = cValue.value
+        })
+        expect(dummy).toBe(undefined)
+        value.foo = 1
+        expect(dummy).toBe(1)
     })
 })
