@@ -1,4 +1,5 @@
 import { createApp } from '../../lib/mini-vue-esm.js'
 import { App } from './app.js'
 
-createApp(App).mount('#app')
+let app = document.querySelector('#app')
+createApp(App).mount(app)
