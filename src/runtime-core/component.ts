@@ -1,40 +1,43 @@
+import { PublicInstanceProxyHandlers } from "./componentPublicInstance"
+
 // 创建component install对象
-export function createComponentInstall(vnode) {
-    const install = {
+export function createComponentInstance(vnode) {
+    const component = {
         vnode,
-        type: vnode.type
+        type: vnode.type,
+        setupState: {}
     }
 
-    return install
+    return component
 }
 
-export function setupComponent(install) {
+export function setupComponent(instance) {
     // initPorps
     // initSlots
-    setupStatefulComponent(install)
+    setupStatefulComponent(instance)
 }
 
-function setupStatefulComponent(install) {
-    const Component = install.type
-
+function setupStatefulComponent(instance) {
+    const Component = instance.type
+    instance.proxy = new Proxy({_:instance}, PublicInstanceProxyHandlers)
     const { setup }  = Component
     if(setup) {
         let setupResult = setup()
-        handleSetupResult(install, setupResult)
+        handleSetupResult(instance, setupResult)
     }
 }
 
-function handleSetupResult(install, setupResult) {
+function handleSetupResult(instance, setupResult) {
     // function object
     // TODD function
     if(typeof setupResult === 'object') {
-        install.setupState = setupResult
+        instance.setupState = setupResult
     }
-    finisComponentSetup(install)
+    finisComponentSetup(instance)
 }
 
 // 完成组件
-function finisComponentSetup(install) {
-    const Component = install.type
-    install.render = Component.render
+function finisComponentSetup(instance) {
+    const Component = instance.type
+    instance.render = Component.render
 }

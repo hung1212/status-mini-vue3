@@ -1,5 +1,5 @@
 import { isObject } from "../shared/index"
-import { createComponentInstall, setupComponent } from "./component"
+import { createComponentInstance, setupComponent } from "./component"
 
 export function renderer(vnode, container) {
     patch(vnode, container)
@@ -25,7 +25,7 @@ function processElement(vnode, container) {
 function mountElement(vnode, container) {
     const { type, props, children  } = vnode
     // 1 创建元素
-    const el = document.createElement(type)
+    const el = (vnode.el = document.createElement(type))
     // 2 添加元素属性
     for(let key in props) {
         let val = props[key]
@@ -55,21 +55,24 @@ function processComponent(vnode, container )  {
     mountComponent(vnode, container)
 }
 
-function mountComponent(vnode, container) {
+function mountComponent(initialVnode, container) {
     // 初始化组件
-    const install = createComponentInstall(vnode)
+    const instance = createComponentInstance(initialVnode)
 
     // 设置component
-    setupComponent(install)
+    setupComponent(instance)
     // 设置render
-    setupRenderEffect(install, container)
+    setupRenderEffect(instance, initialVnode, container)
 }
 
-function setupRenderEffect(install, container) {
+function setupRenderEffect(instance, initialVnode, container) {
+    const { proxy } = instance
     // 调用render函数，获取vnode
-    const subTree = install.render()
+    // 调用render函数的this指向proxy
+    const subTree = instance.render.call(proxy)
     // 触发生命周期beforeMount hoot
     // 调用patch初始化子组件（递归）
     patch(subTree, container)
     // 调用生命周期mount hoot
+    initialVnode.el = subTree.el
 }
