@@ -1,4 +1,4 @@
-import { isObject } from "../shared/index"
+import { ShapeFlags } from "../shared/index"
 import { createComponentInstance, setupComponent } from "./component"
 
 export function renderer(vnode, container) {
@@ -6,13 +6,14 @@ export function renderer(vnode, container) {
 }  
 
 function patch(vnode, container) {
+    const { shapeFlag } = vnode
     // vnod有element和component
     // processElement()
     // 怎么判断是element还是component？？？
     // 字符串的为element类型 'div'
-    if(typeof vnode.type === 'string') {
+    if(shapeFlag & ShapeFlags.ELEMENT) {
         processElement(vnode, container)
-    } else if(typeof isObject(vnode.type)) {
+    } else if(shapeFlag & ShapeFlags.STATEFUL_COMPONENT) {
         processComponent(vnode, container)
     }
 }
@@ -73,6 +74,8 @@ function setupRenderEffect(instance, initialVnode, container) {
     // 触发生命周期beforeMount hoot
     // 调用patch初始化子组件（递归）
     patch(subTree, container)
+    console.log(instance)
+    console.log(subTree)
     // 调用生命周期mount hoot
     initialVnode.el = subTree.el
 }
