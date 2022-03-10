@@ -30,7 +30,13 @@ function mountElement(vnode, container) {
     // 2 添加元素属性
     for(let key in props) {
         let val = props[key]
-        el.setAttribute(key, val)
+        const isOn = (key: string)=> /^on[A-Z]/.test(key)
+        if(isOn(key)) {
+            const event = key.slice(2).toLocaleLowerCase()
+            el.addEventListener(event, val)
+        } else {
+            el.setAttribute(key, val)
+        }
     }
     // 3 处理元素子节点
     if(typeof children === 'string') {
