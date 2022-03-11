@@ -8,7 +8,7 @@ export function isString(val) {
 }
 
 export function isArray(val) {
-    return Array.isArray
+    return Array.isArray(val)
 }
 export const hasChanged = (val, newValue) => {
     return !Object.is(val, newValue);
