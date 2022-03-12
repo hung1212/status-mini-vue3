@@ -15,9 +15,9 @@ export const App = {
             }, 
             [
                 h('p', {class: 'red'}, 'hi ' + this.msg),
-                // h(Foo, {
-                //     count: 1
-                // })
+                h(Foo, {
+                    count: 1
+                })
             ]
         )
     },
