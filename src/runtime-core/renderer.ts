@@ -80,8 +80,8 @@ function setupRenderEffect(instance, initialVnode, container) {
     // 触发生命周期beforeMount hoot
     // 调用patch初始化子组件（递归）
     patch(subTree, container)
-    console.log(instance)
-    console.log(subTree)
+    // console.log(instance)
+    // console.log(subTree)
     // 调用生命周期mount hoot
     initialVnode.el = subTree.el
 }

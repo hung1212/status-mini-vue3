@@ -1,3 +1,5 @@
+import { readonlyHandlers } from "../reactivity/baseHandlers"
+import { shallowReadonly } from "../reactivity/reactive"
 import { initProps } from "./componentProps"
 import { PublicInstanceProxyHandlers } from "./componentPublicInstance"
 
@@ -22,9 +24,11 @@ export function setupComponent(instance) {
 function setupStatefulComponent(instance) {
     const Component = instance.type
     instance.proxy = new Proxy({_:instance}, PublicInstanceProxyHandlers)
+    const { props } = instance
     const { setup }  = Component
     if(setup) {
-        let setupResult = setup()
+        // props是shallowReadonly数据类型
+        let setupResult = setup(shallowReadonly(props))
         handleSetupResult(instance, setupResult)
     }
 }

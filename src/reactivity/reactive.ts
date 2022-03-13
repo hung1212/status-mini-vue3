@@ -1,3 +1,4 @@
+import { isObject } from '../shared';
 import { mutableHandlers, readonlyHandlers, shallowReadonlyHandlers } from './baseHandlers'
 export function reactive(obj) {
   return createReactiveObject(obj, mutableHandlers)
@@ -12,6 +13,11 @@ export function shallowReadonly(obj) {
 }
 
 function createReactiveObject(taw, baseHandlers) {
+  // taw必须是对象 props有可能是undefined
+  if (!isObject(taw)) {
+    console.warn(`target ${taw} 必须是一个对象`);
+    return taw
+  }
   return new Proxy(taw, baseHandlers)
 }
 

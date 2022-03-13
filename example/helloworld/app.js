@@ -14,16 +14,17 @@ export const App = {
                 }
             }, 
             [
-                h('p', {class: 'red'}, 'hi ' + this.msg),
+                h('buttom', {class: 'red'}, 'hi ' + this.msg),
                 h(Foo, {
-                    count: 1
+                    count: this.count
                 })
             ]
         )
     },
     setup() {
         return {
-            msg: 'mini-vue3'
+            msg: 'mini-vue3',
+            count: 10
         }
     }
 }
