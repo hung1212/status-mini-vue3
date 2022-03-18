@@ -4,9 +4,9 @@ import { Foo } from "./Foo.js";
 export const App = {
   name: "App",
   render() {
+    let app = h("div", {}, "App")
     // emit
     return h("div", {}, [
-      h("div", {}, "App"),
       h(Foo, {
         onAdd(a, b) {
           console.log("onAdd", a, b);
@@ -15,6 +15,7 @@ export const App = {
           console.log("onAddFoo");
         },
       }),
+      h('div', {}, 'div' + app)
     ]);
   },
 
