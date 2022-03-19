@@ -7,11 +7,11 @@ export const App = {
     let app = h("div", {}, "App")
     let foo = h(Foo, {},
       {
-        header: (arg)=> h('div',{}, 'header' + arg),
-        fllter: ()=> h('div',{}, 'footer')
+        header: ({arg})=> h('div',{}, 'header' + arg),
+        footer: ()=> h('div',{}, 'footer')
       }
     )
-    return h("div", {},[app,foo])
+    return h("div", {},[app, foo])
   },
   setup() {
     return {}

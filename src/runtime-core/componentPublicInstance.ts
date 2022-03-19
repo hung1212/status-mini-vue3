@@ -1,6 +1,7 @@
-// const publicPropertiesMap = {
-//     $el: (i) => i.vnode.el,
-// };
+const publicPropertiesMap = {
+    $el: (i) => i.vnode.el,
+    $slots:(i)=> i.slots
+};
 
 import { hasOwn } from "../shared"
 
@@ -13,10 +14,10 @@ export const PublicInstanceProxyHandlers = {
             return props[key]
         }
 
-        // 以下代码目前用到 先注释
-        // const publicGetter = publicPropertiesMap[key];
-        // if (publicGetter) {
-        //   return publicGetter(instance);
-        // }
+        // 代理组件Api
+        const publicGetter = publicPropertiesMap[key];
+        if (publicGetter) {
+          return publicGetter(instance);
+        }
     } 
 }
