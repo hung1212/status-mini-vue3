@@ -1,21 +1,41 @@
 import { ShapeFlags } from "../shared/index"
 import { createComponentInstance, setupComponent } from "./component"
+import { Fragment, Text } from "./vnode"
 
 export function renderer(vnode, container) {
     patch(vnode, container)
 }  
 
 function patch(vnode, container) {
-    const { shapeFlag } = vnode
-    // vnod有element和component
-    // processElement()
-    // 怎么判断是element还是component？？？
-    // 字符串的为element类型 'div'
-    if(shapeFlag & ShapeFlags.ELEMENT) {
-        processElement(vnode, container)
-    } else if(shapeFlag & ShapeFlags.STATEFUL_COMPONENT) {
-        processComponent(vnode, container)
+    const { type, shapeFlag } = vnode
+    switch(type) {
+        case Fragment:
+            processFragment(vnode, container)
+            break;
+        case Text:
+            processText(vnode, container)
+            break;
+        default:
+            // vnod有element和component
+            // processElement()
+            // 怎么判断是element还是component？？？
+            // 字符串的为element类型 'div'
+            if(shapeFlag & ShapeFlags.ELEMENT) {
+                processElement(vnode, container)
+            } else if(shapeFlag & ShapeFlags.STATEFUL_COMPONENT) {
+                processComponent(vnode, container)
+            }
     }
+}
+
+function processFragment(vnode, container) {
+    mountChildren(vnode.children, container)
+}
+
+function processText(vnode, container) {
+    const { children } = vnode
+    let el = (vnode.el = document.createTextNode(children))
+    container.append(el)
 }
 
 function processElement(vnode, container) {

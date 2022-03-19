@@ -1,4 +1,4 @@
-import { h } from "../../lib/mini-vue-esm.js";
+import { h, createText } from "../../lib/mini-vue-esm.js";
 import { Foo } from "./Foo.js";
 
 export const App = {
@@ -7,7 +7,10 @@ export const App = {
     let app = h("div", {}, "App")
     let foo = h(Foo, {},
       {
-        header: ({arg})=> h('div',{}, 'header' + arg),
+        header: ({arg})=> [
+          h('div',{},'header'+arg),
+          createText('你好呀')
+        ],
         footer: ()=> h('div',{}, 'footer')
       }
     )

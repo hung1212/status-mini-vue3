@@ -10,7 +10,6 @@ export const Foo = {
       renderSlots(this.$slots, 'header', {
         arg
       }),
-      foo,
       renderSlots(this.$slots, 'footer')
     ]);
   },

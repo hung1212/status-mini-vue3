@@ -1,4 +1,8 @@
 import { isArray, isObject, isString, ShapeFlags } from "../shared/index"
+
+// Fragment和Text类型
+export const Fragment = Symbol('Fragment')
+export const Text = Symbol("Text")
 export function createVNode(type, props?, children?) {
     const vnode = {
         type, 
@@ -16,6 +20,10 @@ export function createVNode(type, props?, children?) {
         vnode.shapeFlag |= ShapeFlags.SLOTS_CHILDREN
     }
     return vnode
+}
+
+export function createText(text) {
+    return createVNode(Text, {}, text)
 }
 
 function getShapeFlag(type) {
