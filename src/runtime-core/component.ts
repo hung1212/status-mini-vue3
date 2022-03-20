@@ -34,10 +34,12 @@ function setupStatefulComponent(instance) {
     const { props } = instance
     const { setup }  = Component
     if(setup) {
+        setCurrentInstance(instance)
         // props是shallowReadonly数据类型
         let setupResult = setup(shallowReadonly(props), {
             emit: instance.emit
         })
+        setCurrentInstance(null)
         handleSetupResult(instance, setupResult)
     }
 }
@@ -55,4 +57,13 @@ function handleSetupResult(instance, setupResult) {
 function finisComponentSetup(instance) {
     const Component = instance.type
     instance.render = Component.render
+}
+
+let currentInstance = null
+export function getCurrentInstance() {
+    return currentInstance
+}
+
+function setCurrentInstance(instance) {
+    currentInstance = instance
 }
