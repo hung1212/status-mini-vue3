@@ -1,4 +1,4 @@
-import { h } from "../../lib/mini-vue-esm"
+import { h, provide, inject } from "../../lib/mini-vue-esm.js"
 
 const Provide = {
     setup() {
@@ -6,14 +6,14 @@ const Provide = {
         provide('bar', 'barVal')
     },
     render() {
-        return h('div', {}, [ h('div', {}, 'provide'), ])
+        return h('div', {}, [ h('div', {}, 'provide'), h(ProvedeTwo)])
     }
 }
 
 const ProvedeTwo = {
     setup() {
         provide('foo', 'fooValTwo')
-        let foo =  injecy('foo')
+        let foo =  inject('foo')
         console.log('ProvideTwo', foo)
         return {
             foo
@@ -21,7 +21,7 @@ const ProvedeTwo = {
     },
     render() {
         return h('div', {}, [ 
-            h('div', {}, 'provideTwo' + this.foo), 
+            h('div', {}, 'provideTwo ' + this.foo), 
             h(Inject)
         ])
     }
@@ -29,9 +29,9 @@ const ProvedeTwo = {
 
 const Inject = {
     setup() {
-        let foo = injecy('foo')
-        let bar = injecy('bar')
-            // const baz = inject("baz", "bazDefault");
+        let foo = inject('foo')
+        let bar = inject('bar')
+        // const baz = inject("baz", "bazDefault");
         const baz = inject("baz", () => "bazDefault");
         return {
             foo,
@@ -41,9 +41,9 @@ const Inject = {
     },
     render() {
         return h('div', {}, [ 
-            h('div', {}, 'InjectFoo' + this.foo), 
-            h('div', {}, 'InjectBar' + this.bar),
-            h('div', {}, 'InjectBaz' + this.baz),
+            h('div', {}, 'InjectFoo ' + this.foo), 
+            h('div', {}, 'InjectBar ' + this.bar),
+            h('div', {}, 'InjectBaz ' + this.baz),
         ])
     }
 }

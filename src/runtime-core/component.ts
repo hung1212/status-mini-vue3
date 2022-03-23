@@ -6,13 +6,15 @@ import { initSlots } from "./componentSlots"
 import { emit } from "./componrntEmit"
 
 // 创建component install对象
-export function createComponentInstance(vnode) {
+export function createComponentInstance(vnode, parent) {
     const component = {
         vnode,
         type: vnode.type,
         setupState: {},
         props: {},
         slots: {},
+        provides: parent ? parent.provides : {},
+        parent,
         emit: ()=> {},
     }
 
