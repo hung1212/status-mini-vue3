@@ -1,6 +1,7 @@
-export { createApp } from './createApp'
+export { createAppAPI } from './createApp'
 export { h } from './h'
 export { renderSlots } from '../runtime-core/helpers/renderSlots'
 export { createText } from './vnode'
 export { getCurrentInstance } from './component'
 export { provide, inject } from './apiInject'
+export { createRender } from './renderer'
