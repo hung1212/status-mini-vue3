@@ -36,15 +36,14 @@ export const App = {
         }
     },
     render() {
-        return h('div',{},[
+        return h('div',{
+                id: 'props',
+                ...this.props
+            },[
             h('div', {}, this.count),
             h('button',{
                 onClick: this.onClick
             }, 'click'),
-            h('div', {
-                id: 'props',
-                ...this.props
-            }, 'props'),
             h('button', {
                 onClick: this.onChangePropsDom1
             }, 'changeProps --- 修改'),
