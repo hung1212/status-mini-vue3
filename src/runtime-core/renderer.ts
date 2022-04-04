@@ -1,5 +1,5 @@
 import { effect } from "../reactivity/effect"
-import { ShapeFlags } from "../shared/index"
+import { EMPTY_OBJ, ShapeFlags } from "../shared/index"
 import { createComponentInstance, setupComponent } from "./component"
 import { createAppAPI } from "./createApp"
 import { Fragment, Text } from "./vnode"
@@ -66,7 +66,7 @@ export function createRender(options) {
         // 2 添加元素属性
         for(let key in props) {
             let val = props[key]
-            hostPatchProp(el, key, val)
+            hostPatchProp(el, key, null, val)
         }
         // 3 处理元素子节点
         if( shapeFlag & ShapeFlags.TEXT_CHILDREN) {
@@ -82,6 +82,36 @@ export function createRender(options) {
         console.log('patchElement')
         console.log('n1', n1)
         console.log('n2', n2)
+
+        const oldProps = n1.props || EMPTY_OBJ
+        const newProps = n2.props || EMPTY_OBJ
+
+        const el = (n2.el = n1.el)
+
+        patchProps(el, oldProps, newProps)
+    }
+
+    function patchProps(el, oldProps, newProps) {
+        // 新旧节点不同
+        if(oldProps !== newProps) {
+            // 把newProps遍历添加
+            for (const key in newProps) {
+                const pervProp = oldProps[key]
+                const nextProp = newProps[key]
+
+                if(pervProp !== nextProp) {
+                    hostPatchProp(el, key, pervProp, nextProp)
+                }
+            }
+            // 删除new没有 old有的
+            if(oldProps !== EMPTY_OBJ) {
+                for(const key in oldProps) {
+                    if(!(key in newProps)) {
+                        hostPatchProp(el, key, oldProps[key], null)
+                    }
+                }
+            }
+        }
     }
     
     

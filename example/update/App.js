@@ -2,7 +2,7 @@ import { h, ref } from "../../lib/mini-vue-esm.js"
 
 export const App = {
     setup() {
-        const count = ref(0)
+        const count = ref('0')
 
         const onClick = ()=> {
             count.value++
@@ -51,7 +51,7 @@ export const App = {
                 onClick: this.onChangePropsDom2
             }, 'changeProps --- foo == undefined 删除了'),
             h('button', {
-                onClick: this.onChangePropsDom2
+                onClick: this.onChangePropsDom3
             }, 'changeProps --- key 在新的里面没有了 删除')
         ])
     }
