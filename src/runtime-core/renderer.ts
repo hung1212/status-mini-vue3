@@ -10,7 +10,8 @@ export function createRender(options) {
     const {
         createElement: hostCreateElement,
         patchProp: hostPatchProp,
-        insert: hostInsert
+        insert: hostInsert,
+        setElementText: hostSetElementText
     } = options
 
     function renderer(vnode, container) {
@@ -55,7 +56,7 @@ export function createRender(options) {
             mountElement(n2, container, parentComponent)
         } else {
             // 更新
-            patchElement(n1, n2, container)
+            patchElement(n1, n2, container, parentComponent)
         }
     }
     
@@ -78,17 +79,31 @@ export function createRender(options) {
         hostInsert(el, container)
     }
 
-    function patchElement(n1, n2, container) {
+    function patchElement(n1, n2, container, parentComponent) {
         console.log('patchElement')
         console.log('n1', n1)
         console.log('n2', n2)
+        console.log('container', container)
+        console.log('parentComponent', parentComponent)
 
         const oldProps = n1.props || EMPTY_OBJ
         const newProps = n2.props || EMPTY_OBJ
 
         const el = (n2.el = n1.el)
 
+        patchChildren(n1, n2, container, parentComponent)
         patchProps(el, oldProps, newProps)
+    }
+
+    function patchChildren(n1, n2, container, parentComponent) {
+        const pervShapeFlag = n1.shapeFlag
+        const c1 = n1.children
+        const { shapeFlag } = n2
+        const c2 = n2.children
+
+        if(shapeFlag & ShapeFlags.TEXT_CHILDREN) {
+            hostSetElementText(n2.el, c2)
+        }
     }
 
     function patchProps(el, oldProps, newProps) {

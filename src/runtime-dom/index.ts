@@ -22,10 +22,15 @@ function insert(child, parent) {
     parent.append(child)
 }
 
+function setElementText(el, text) {
+    el.textContent = text
+}
+
 const render: any = createRender({
     createElement,
     patchProp,
-    insert
+    insert,
+    setElementText
 })
 
 export function createApp(...args) {
