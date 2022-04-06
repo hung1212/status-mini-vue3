@@ -11,7 +11,8 @@ export function createRender(options) {
         createElement: hostCreateElement,
         patchProp: hostPatchProp,
         insert: hostInsert,
-        setElementText: hostSetElementText
+        setElementText: hostSetElementText,
+        remove: hostRemove
     } = options
 
     function renderer(vnode, container) {
@@ -41,7 +42,7 @@ export function createRender(options) {
     }
     
     function processFragment(n1, n2, container, parentComponent) {
-        mountChildren(n2, container, parentComponent)
+        mountChildren(n2.children, container, parentComponent)
     }
     
     function processText(n1, n2 , container) {
@@ -73,7 +74,7 @@ export function createRender(options) {
         if( shapeFlag & ShapeFlags.TEXT_CHILDREN) {
             el.textContent = children
         } else if(shapeFlag & ShapeFlags.ARRAY_CHILDREN) {
-            mountChildren(vnode, el, parentComponent)
+            mountChildren(vnode.children, el, parentComponent)
         }
         // 4 元素添加到container
         hostInsert(el, container)
@@ -102,8 +103,24 @@ export function createRender(options) {
         const c2 = n2.children
 
         if(shapeFlag & ShapeFlags.TEXT_CHILDREN) {
+
+            if(pervShapeFlag & ShapeFlags.ARRAY_CHILDREN) {
+                unmountChildren(c1)
+            }
+
             hostSetElementText(n2.el, c2)
+        } else {
+            if(pervShapeFlag & ShapeFlags.TEXT_CHILDREN) {
+                hostSetElementText(container, "")
+                mountChildren(c2, container, parentComponent)
+            }
         }
+    }
+    
+    function unmountChildren(children) {
+        children.forEach(v=> {
+            hostRemove(v.el)
+        })
     }
 
     function patchProps(el, oldProps, newProps) {
@@ -130,9 +147,9 @@ export function createRender(options) {
     }
     
     
-    function mountChildren(vnode, container, parentComponent) {
+    function mountChildren(children, container, parentComponent) {
         // 遍历children递归patch函数
-        for(let v of vnode.children) {
+        for(let v of children) {
             patch(null, v, container, parentComponent)
         }
     }
@@ -155,7 +172,6 @@ export function createRender(options) {
     
     function setupRenderEffect(instance, initialVnode, container) {
         effect(()=> {
-
             // 挂载
             if(!instance.isMounted) {
                 const { proxy } = instance

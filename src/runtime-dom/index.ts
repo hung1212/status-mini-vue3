@@ -26,11 +26,19 @@ function setElementText(el, text) {
     el.textContent = text
 }
 
+function remove(el) {
+    let parent = el.parentNode
+    if(parent) {
+        parent.removeChild(el)
+    }
+}
+
 const render: any = createRender({
     createElement,
     patchProp,
     insert,
-    setElementText
+    setElementText,
+    remove
 })
 
 export function createApp(...args) {
